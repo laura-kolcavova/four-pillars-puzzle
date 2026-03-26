@@ -1,13 +1,21 @@
+import {
+  arrowClockwiseImage,
+  arrowCounterClockwiseImage,
+} from "./contentManager";
+
 const PILLAR_PART_COLORS = {
-  0: "#1d4ed8",
-  1: "#dc2626",
-  2: "#facc15",
-  3: "#16a34a",
+  0: "#16a34a",
+  1: "#1d4ed8",
+  2: "#dc2626",
+  3: "#facc15",
 };
 
 const PILLAR_STROKE_COLOR = "#111827";
 
 const PILLAR_STROKE_WIDTH = 3;
+
+const TURN_BUTTON_SIZE = 46;
+const TURN_BUTTON_DISTANCE_FROM_CENTER = 86;
 
 export const drawPillars = (context, pillars) => {
   const radius = 55;
@@ -24,6 +32,7 @@ export const drawPillars = (context, pillars) => {
     const centerY = offsetY + row * gapY;
 
     drawPillar(context, pillar, centerX, centerY, radius);
+    drawTurnButtons(context, pillar, centerX, centerY);
   });
 };
 
@@ -31,10 +40,10 @@ const drawPillar = (context, pillar, centerX, centerY, radius) => {
   const parts = pillar.parts[pillar.rotationState];
 
   const quarterAngles = [
+    [-Math.PI, -Math.PI / 2],
     [-Math.PI / 2, 0],
     [0, Math.PI / 2],
     [Math.PI / 2, Math.PI],
-    [Math.PI, (3 * Math.PI) / 2],
   ];
 
   quarterAngles.forEach(([startAngle, endAngle], index) => {
@@ -56,21 +65,76 @@ const drawPillar = (context, pillar, centerX, centerY, radius) => {
   context.stroke();
 };
 
-const drawTurnButtons = (context, centerX, centerY, radius) => {
-  const horizontalOffset = radius + 46;
-  const buttonCenterY = centerY;
+const drawTurnButtons = (context, pillar, centerX, centerY) => {
+  const parts = pillar.parts[pillar.rotationState];
 
-  drawTurnButton(
+  const clockwisePartIndex = parts.indexOf(0);
+  const counterClockwisePartIndex = parts.indexOf(3);
+
+  const getButtonPosition = (partIndex) => {
+    const angle = -Math.PI / 4 + (Math.PI / 2) * partIndex;
+
+    return {
+      x: centerX + Math.cos(angle) * TURN_BUTTON_DISTANCE_FROM_CENTER,
+      y: centerY + Math.sin(angle) * TURN_BUTTON_DISTANCE_FROM_CENTER,
+    };
+  };
+
+  const clockwisePosition = getButtonPosition(clockwisePartIndex);
+  const counterClockwisePosition = getButtonPosition(counterClockwisePartIndex);
+
+  drawTurnCounterClockwiseButton(
     context,
-    centerX - horizontalOffset,
-    buttonCenterY,
-    "counterclockwise",
+    counterClockwisePosition.x,
+    counterClockwisePosition.y,
   );
 
-  drawTurnButton(
-    context,
-    centerX + horizontalOffset,
-    buttonCenterY,
-    "clockwise",
+  drawTurnClockwiseButton(context, clockwisePosition.x, clockwisePosition.y);
+};
+
+const drawTurnClockwiseButton = (context, x, y) => {
+  if (!arrowClockwiseImage.complete || arrowClockwiseImage.naturalWidth === 0) {
+    return;
+  }
+
+  const half = TURN_BUTTON_SIZE / 2;
+
+  context.save();
+  context.translate(x, y);
+  context.rotate(-(45 * Math.PI) / 180);
+
+  context.drawImage(
+    arrowClockwiseImage,
+    -half,
+    -half,
+    TURN_BUTTON_SIZE,
+    TURN_BUTTON_SIZE,
   );
+
+  context.restore();
+};
+
+const drawTurnCounterClockwiseButton = (context, x, y) => {
+  if (
+    !arrowCounterClockwiseImage.complete ||
+    arrowCounterClockwiseImage.naturalWidth === 0
+  ) {
+    return;
+  }
+
+  const half = TURN_BUTTON_SIZE / 2;
+
+  context.save();
+  context.translate(x, y);
+  context.rotate((45 * Math.PI) / 180);
+
+  context.drawImage(
+    arrowCounterClockwiseImage,
+    -half,
+    -half,
+    TURN_BUTTON_SIZE,
+    TURN_BUTTON_SIZE,
+  );
+
+  context.restore();
 };

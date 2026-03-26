@@ -1,4 +1,5 @@
 import { createPuzzleGame } from "../../core/fourPillarsPuzzle/puzzleGame";
+import { loadContent } from "./contentManager";
 import { drawPillars } from "./renderer";
 
 const TARGET_FPS = 60;
@@ -22,6 +23,8 @@ export const createGameApp = () => {
   };
 
   const run = () => {
+    loadContent();
+
     game.puzzleGame = createPuzzleGame();
 
     game.previousFrameTime = performance.now();
@@ -31,6 +34,13 @@ export const createGameApp = () => {
 
   const gameLoop = (currentFrameTimeInMs) => {
     const deltaTimeInMs = currentFrameTimeInMs - game.previousFrameTimeInMs;
+
+    // if (deltaTimeInMs >= TARGET_ELAPSED_TIME_IN_MS) {
+    //   game.previousFrameTimeInMs =
+    //     currentFrameTimeInMs - (deltaTimeInMs % TARGET_ELAPSED_TIME_IN_MS);
+
+    //   update(game);
+    // }
 
     game.accumulatedElapsedTimeInMs += deltaTimeInMs;
     game.previousFrameTimeInMs = currentFrameTimeInMs;
@@ -49,12 +59,6 @@ export const createGameApp = () => {
       }
 
       game.elapsedGameTimeInMs = TARGET_ELAPSED_TIME_IN_MS * stepCount;
-      // if (deltaTimeInMs >= TARGET_ELAPSED_TIME_IN_MS) {
-      //   game.previousFrameTimeInMs =
-      //     currentFrameTimeInMs - (deltaTimeInMs % TARGET_ELAPSED_TIME_IN_MS);
-
-      //   update(game);
-      // }
     } else {
       game.elapsedGameTimeInMs = game.accumulatedElapsedTimeInMs;
       game.totalGameTimeInMs += game.accumulatedElapsedTimeInMs;

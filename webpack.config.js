@@ -10,4 +10,12 @@ export default {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
   },
+  module: {
+    rules: [
+      {
+        test: /\.svg$/,
+        type: "asset/resource",
+      },
+    ],
+  },
 };
