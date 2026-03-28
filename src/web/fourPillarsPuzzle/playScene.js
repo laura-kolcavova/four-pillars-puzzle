@@ -7,10 +7,23 @@ import {
   arrowCounterClockwiseImage,
 } from "./contentManager";
 import { drawUiPillar, drawUiPillarButton } from "./renderer";
+import {
+  POSITION_LEFT_BOTTOM,
+  POSITION_LEFT_TOP,
+  POSITION_RIGHT_BOTTOM,
+  POSITION_RIGHT_TOP,
+} from "../../core/fourPillarsPuzzle/puzzle";
 
 const PILLAR_RADIUS = 55;
 const PILLAR_OFFSET_X = 220;
 const PILLAR_OFFSET_Y = 120;
+
+const PILLAR_POSITION_MAP = {
+  [POSITION_LEFT_TOP]: [0, 0],
+  [POSITION_RIGHT_TOP]: [0, 1],
+  [POSITION_LEFT_BOTTOM]: [1, 0],
+  [POSITION_RIGHT_BOTTOM]: [1, 1],
+};
 
 const PILLARS_GAP_X = 220;
 const PILLARS_GAP_Y = 170;
@@ -70,8 +83,10 @@ export const createPlayScene = (game) => {
 
 const createUiPillars = (pillars) => {
   const uiPillars = pillars.map((pillar) => {
-    const row = Math.floor(pillar.position / 2);
-    const col = pillar.position % 2;
+    const pillarMappedPosition = PILLAR_POSITION_MAP[pillar.position];
+
+    const row = pillarMappedPosition[0];
+    const col = pillarMappedPosition[1];
 
     const centerX = PILLAR_OFFSET_X + col * PILLARS_GAP_X;
     const centerY = PILLAR_OFFSET_Y + row * PILLARS_GAP_Y;
