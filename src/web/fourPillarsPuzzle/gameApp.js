@@ -21,6 +21,13 @@ export const createGameApp = () => {
   const addCanvas = (canvasId) => {
     game.canvas = document.getElementById(canvasId);
     game.canvasContext = game.canvas.getContext("2d");
+
+    game.canvas.addEventListener("click", (event) => {
+      const rect = game.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      game.currentScene?.handleClick(x, y);
+    });
   };
 
   const initialize = () => {

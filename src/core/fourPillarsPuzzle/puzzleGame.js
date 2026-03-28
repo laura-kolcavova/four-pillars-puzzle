@@ -43,14 +43,12 @@ const rotateClockwise = (pillar) => {
     return;
   }
 
-  console.log(pillar.rotationState);
   pillar.rotationState++;
-  console.log(pillar.rotationState);
 };
 
 const rotateCounterClockwise = (pillar) => {
   if (pillar.rotationState === 0) {
-    pillar.rotationState === pillar.parts.length - 1;
+    pillar.rotationState = pillar.parts.length - 1;
 
     return;
   }

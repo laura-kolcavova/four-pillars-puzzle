@@ -41,13 +41,13 @@ export const drawUiPillar = (context, uiPillar) => {
 };
 
 export const drawUiPillarButton = (context, uiPillarButton) => {
-  const { x, y, width, height, img, rotate } = uiPillarButton;
+  const { centerX, centerY, width, height, img, rotate } = uiPillarButton;
 
   const halfX = width / 2;
   const halfY = height / 2;
 
   context.save();
-  context.translate(x, y);
+  context.translate(centerX, centerY);
   context.rotate(rotate);
 
   context.drawImage(img, -halfX, -halfY, width, height);
