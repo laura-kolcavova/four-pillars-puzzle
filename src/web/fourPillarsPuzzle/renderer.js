@@ -1,8 +1,3 @@
-import {
-  arrowClockwiseImage,
-  arrowCounterClockwiseImage,
-} from "./contentManager";
-
 const PILLAR_PART_COLORS = [
   "#16a34a", // green
   "#1d4ed8", // blue
@@ -14,29 +9,9 @@ const PILLAR_STROKE_COLOR = "#111827";
 
 const PILLAR_STROKE_WIDTH = 3;
 
-const TURN_BUTTON_SIZE = 46;
-const TURN_BUTTON_DISTANCE_FROM_CENTER = 86;
+export const drawUiPillar = (context, uiPillar) => {
+  const { centerX, centerY, radius, pillar } = uiPillar;
 
-export const drawPillars = (context, pillars) => {
-  const radius = 55;
-  const offsetX = 220;
-  const offsetY = 120;
-  const gapX = 220;
-  const gapY = 170;
-
-  pillars.forEach((pillar, index) => {
-    const col = index % 2;
-    const row = Math.floor(index / 2);
-
-    const centerX = offsetX + col * gapX;
-    const centerY = offsetY + row * gapY;
-
-    drawPillar(context, pillar, centerX, centerY, radius);
-    drawTurnButtons(context, pillar, centerX, centerY);
-  });
-};
-
-const drawPillar = (context, pillar, centerX, centerY, radius) => {
   const parts = pillar.parts[pillar.rotationState];
 
   const quarterAngles = [
@@ -65,76 +40,17 @@ const drawPillar = (context, pillar, centerX, centerY, radius) => {
   context.stroke();
 };
 
-const drawTurnButtons = (context, pillar, centerX, centerY) => {
-  const parts = pillar.parts[pillar.rotationState];
+export const drawUiPillarButton = (context, uiPillarButton) => {
+  const { x, y, width, height, img, rotate } = uiPillarButton;
 
-  const clockwisePartIndex = parts.indexOf(0);
-  const counterClockwisePartIndex = parts.indexOf(3);
-
-  const getButtonPosition = (partIndex) => {
-    const angle = -Math.PI / 4 + (Math.PI / 2) * partIndex;
-
-    return {
-      x: centerX + Math.cos(angle) * TURN_BUTTON_DISTANCE_FROM_CENTER,
-      y: centerY + Math.sin(angle) * TURN_BUTTON_DISTANCE_FROM_CENTER,
-    };
-  };
-
-  const clockwisePosition = getButtonPosition(clockwisePartIndex);
-  const counterClockwisePosition = getButtonPosition(counterClockwisePartIndex);
-
-  drawTurnCounterClockwiseButton(
-    context,
-    counterClockwisePosition.x,
-    counterClockwisePosition.y,
-  );
-
-  drawTurnClockwiseButton(context, clockwisePosition.x, clockwisePosition.y);
-};
-
-const drawTurnClockwiseButton = (context, x, y) => {
-  if (!arrowClockwiseImage.complete || arrowClockwiseImage.naturalWidth === 0) {
-    return;
-  }
-
-  const half = TURN_BUTTON_SIZE / 2;
+  const halfX = width / 2;
+  const halfY = height / 2;
 
   context.save();
   context.translate(x, y);
-  context.rotate(-(45 * Math.PI) / 180);
+  context.rotate(rotate);
 
-  context.drawImage(
-    arrowClockwiseImage,
-    -half,
-    -half,
-    TURN_BUTTON_SIZE,
-    TURN_BUTTON_SIZE,
-  );
-
-  context.restore();
-};
-
-const drawTurnCounterClockwiseButton = (context, x, y) => {
-  if (
-    !arrowCounterClockwiseImage.complete ||
-    arrowCounterClockwiseImage.naturalWidth === 0
-  ) {
-    return;
-  }
-
-  const half = TURN_BUTTON_SIZE / 2;
-
-  context.save();
-  context.translate(x, y);
-  context.rotate((45 * Math.PI) / 180);
-
-  context.drawImage(
-    arrowCounterClockwiseImage,
-    -half,
-    -half,
-    TURN_BUTTON_SIZE,
-    TURN_BUTTON_SIZE,
-  );
+  context.drawImage(img, -halfX, -halfY, width, height);
 
   context.restore();
 };

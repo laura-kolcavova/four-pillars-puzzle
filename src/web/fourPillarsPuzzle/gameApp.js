@@ -25,12 +25,11 @@ export const createGameApp = () => {
 
   const initialize = () => {
     game.currentScene = createPlayScene(game);
-
     game.currentScene.initialize();
   };
 
   const gameLoop = (currentFrameTimeInMs) => {
-    const deltaTimeInMs = currentFrameTimeInMs - game.previousFrameTimeInMs;
+    const deltaTimeInMs = currentFrameTimeInMs - gameTime.previousFrameTimeInMs;
 
     // if (deltaTimeInMs >= TARGET_ELAPSED_TIME_IN_MS) {
     //   game.previousFrameTimeInMs =
@@ -86,7 +85,7 @@ export const createGameApp = () => {
   const run = () => {
     initialize();
 
-    game.previousFrameTime = performance.now();
+    gameTime.previousFrameTime = performance.now();
 
     gameLoop(0);
   };
