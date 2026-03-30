@@ -24,5 +24,6 @@ export const createUiPillarButton = (
     img,
     rotate,
     onClick,
+    isHover: false,
   };
 };

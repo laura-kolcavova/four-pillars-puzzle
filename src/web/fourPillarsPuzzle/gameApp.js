@@ -24,9 +24,20 @@ export const createGameApp = () => {
 
     game.canvas.addEventListener("click", (event) => {
       const rect = game.canvas.getBoundingClientRect();
+
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
+
       game.currentScene?.handleClick(x, y);
+    });
+
+    game.canvas.addEventListener("mousemove", (event) => {
+      const rect = game.canvas.getBoundingClientRect();
+
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      game.currentScene?.handleMouseMove(x, y);
     });
   };
 

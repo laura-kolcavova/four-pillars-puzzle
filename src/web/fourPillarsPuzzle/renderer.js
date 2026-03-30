@@ -10,7 +10,15 @@ const PILLAR_STROKE_COLOR = "#111827";
 const PILLAR_STROKE_WIDTH = 3;
 
 export const drawUiPillar = (context, uiPillar) => {
-  const { centerX, centerY, radius, pillar } = uiPillar;
+  const {
+    centerX,
+    centerY,
+    radius,
+    isRotatingClockwise,
+    isRotatingCounterClockwise,
+    rotateAnimationProgress,
+    pillar,
+  } = uiPillar;
 
   const parts = pillar.parts[pillar.rotationState];
 
@@ -21,12 +29,28 @@ export const drawUiPillar = (context, uiPillar) => {
     [Math.PI / 2, Math.PI],
   ];
 
+  const offsetAngle = Math.PI / 4;
+
+  let rotateAngle = 0;
+
+  if (isRotatingClockwise) {
+    rotateAngle = rotateAnimationProgress * (Math.PI / 2);
+  } else if (isRotatingCounterClockwise) {
+    rotateAngle = -rotateAnimationProgress * (Math.PI / 2);
+  }
+
   quarterAngles.forEach(([startAngle, endAngle], index) => {
     const partValue = parts[index];
 
     context.beginPath();
     context.moveTo(centerX, centerY);
-    context.arc(centerX, centerY, radius, startAngle, endAngle);
+    context.arc(
+      centerX,
+      centerY,
+      radius,
+      startAngle + offsetAngle + rotateAngle,
+      endAngle + offsetAngle + rotateAngle,
+    );
     context.closePath();
 
     context.fillStyle = PILLAR_PART_COLORS[partValue];
@@ -41,7 +65,8 @@ export const drawUiPillar = (context, uiPillar) => {
 };
 
 export const drawUiPillarButton = (context, uiPillarButton) => {
-  const { centerX, centerY, width, height, img, rotate } = uiPillarButton;
+  const { centerX, centerY, width, height, img, rotate, isHover } =
+    uiPillarButton;
 
   const halfX = width / 2;
   const halfY = height / 2;
@@ -49,6 +74,11 @@ export const drawUiPillarButton = (context, uiPillarButton) => {
   context.save();
   context.translate(centerX, centerY);
   context.rotate(rotate);
+
+  context.beginPath();
+  context.arc(0, 0, Math.min(halfX, halfY), 0, 2 * Math.PI);
+  context.fillStyle = isHover ? "#bfdbfe" : "#e5e7eb";
+  context.fill();
 
   context.drawImage(img, -halfX, -halfY, width, height);
 

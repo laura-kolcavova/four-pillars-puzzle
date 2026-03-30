@@ -4,5 +4,8 @@ export const createUiPillar = (pillar, centerX, centerY, radius) => {
     radius,
     centerX,
     centerY,
+    isRotatingClockwise: false,
+    isRotatingCounterClockwise: false,
+    rotateAnimationProgress: 0,
   };
 };
