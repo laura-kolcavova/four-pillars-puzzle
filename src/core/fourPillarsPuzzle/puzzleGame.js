@@ -3,56 +3,62 @@ import { createPuzzle } from "./puzzle";
 export const createPuzzleGame = () => {
   const puzzle = createPuzzle();
 
-  const getConnectedPillars = (pillar) => {
-    const position = pillar.position;
+  const getPillar = (position) => {
+    const pillar = puzzle.pillars[position];
+
+    return pillar;
+  };
+
+  const getConnectedPositions = (position) => {
     const connectedPositions = puzzle.connectedPositions[position];
 
-    const connectedPillarA = puzzle.pillars[connectedPositions[0]];
-    const connectedPillarB = puzzle.pillars[connectedPositions[1]];
-
-    return [connectedPillarA, connectedPillarB];
+    return connectedPositions;
   };
 
-  const rotatePillarClockwise = (pillar) => {
-    const connectedPillars = getConnectedPillars(pillar);
+  const rotatePillarClockwise = (position) => {
+    const connectedPositions = getConnectedPositions(position);
 
-    rotateSinglePillarClockwise(pillar);
-    rotateSinglePillarClockwise(connectedPillars[0]);
-    rotateSinglePillarClockwise(connectedPillars[1]);
+    rotateSinglePillarClockwise(position);
+    rotateSinglePillarClockwise(connectedPositions[0]);
+    rotateSinglePillarClockwise(connectedPositions[1]);
   };
 
-  const rotatePillarCounterClockwise = (pillar) => {
-    const connectedPillars = getConnectedPillars(pillar);
+  const rotatePillarCounterClockwise = (position) => {
+    const connectedPositions = getConnectedPositions(position);
 
-    rotateSinglePillarCounterClockwise(pillar);
-    rotateSinglePillarCounterClockwise(connectedPillars[0]);
-    rotateSinglePillarCounterClockwise(connectedPillars[1]);
+    rotateSinglePillarCounterClockwise(position);
+    rotateSinglePillarCounterClockwise(connectedPositions[0]);
+    rotateSinglePillarCounterClockwise(connectedPositions[1]);
+  };
+
+  const rotateSinglePillarClockwise = (position) => {
+    const pillar = getPillar(position);
+
+    if (pillar.rotationState === pillar.parts.length - 1) {
+      pillar.rotationState = 0;
+
+      return;
+    }
+
+    pillar.rotationState++;
+  };
+
+  const rotateSinglePillarCounterClockwise = (position) => {
+    const pillar = getPillar(position);
+
+    if (pillar.rotationState === 0) {
+      pillar.rotationState = pillar.parts.length - 1;
+
+      return;
+    }
+
+    pillar.rotationState--;
   };
 
   return {
     puzzle,
-    getConnectedPillars,
+    getPillar,
     rotatePillarClockwise,
     rotatePillarCounterClockwise,
   };
-};
-
-const rotateSinglePillarClockwise = (pillar) => {
-  if (pillar.rotationState === pillar.parts.length - 1) {
-    pillar.rotationState = 0;
-
-    return;
-  }
-
-  pillar.rotationState++;
-};
-
-const rotateSinglePillarCounterClockwise = (pillar) => {
-  if (pillar.rotationState === 0) {
-    pillar.rotationState = pillar.parts.length - 1;
-
-    return;
-  }
-
-  pillar.rotationState--;
 };

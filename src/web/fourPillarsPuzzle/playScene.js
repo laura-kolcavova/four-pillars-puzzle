@@ -18,8 +18,6 @@ const PILLAR_RADIUS = 55;
 const PILLAR_OFFSET_X = 220;
 const PILLAR_OFFSET_Y = 120;
 
-const PILLAR_ROTATE_ANIMATION_DURATION_IN_MS = 1000;
-
 const PILLAR_POSITION_MAP = {
   [POSITION_LEFT_TOP]: [0, 0],
   [POSITION_RIGHT_TOP]: [0, 1],
@@ -38,6 +36,7 @@ export const createPlayScene = (game) => {
     puzzleGame: null,
     uiPillars: [],
     uiPillarButtons: [],
+    pillarsAreRotating: false,
   };
 
   const initialize = () => {
@@ -91,12 +90,18 @@ export const createPlayScene = (game) => {
   };
 
   const update = (gameTime) => {
-    updateUiPillars(gameTime, scene.uiPillars, scene.puzzleGame);
+    if (scene.pillarsAreRotating) {
+      handleUiPillarRotation(gameTime, scene.uiPillars, scene.puzzleGame);
+    }
   };
 
   const draw = (gameTime) => {
-    drawUiPillars(game.canvasContext, scene.uiPillars);
-    drawUiPillarButtons(game.canvasContext, scene.uiPillarButtons);
+    if (scene.pillarsAreRotating) {
+      drawUiPillars(game.canvasContext, scene.puzzleGame, scene.uiPillars);
+      drawUiPillarButtons(game.canvasContext, scene.uiPillarButtons);
+    } else {
+      drawUiPillars(game.canvasContext, scene.puzzleGame, scene.uiPillars);
+    }
   };
 
   return {
@@ -118,7 +123,7 @@ const createUiPillars = (pillars) => {
     const centerX = PILLAR_OFFSET_X + col * PILLARS_GAP_X;
     const centerY = PILLAR_OFFSET_Y + row * PILLARS_GAP_Y;
 
-    return createUiPillar(pillar, centerX, centerY, PILLAR_RADIUS);
+    return createUiPillar(pillar.position, centerX, centerY, PILLAR_RADIUS);
   });
 
   return uiPillars;
@@ -141,7 +146,7 @@ const createUiPillarButtons = (uiPillars, puzzleGame) => {
   return uiPillarButtons;
 };
 
-const createTurnClockwiseButton = (uiPillar, puzzleGame) => {
+const createTurnClockwiseButton = (uiPillar) => {
   const pillarAngle = -Math.PI / 4;
 
   const centerX =
@@ -190,86 +195,4 @@ const createTurnCounterClockwiseButton = (uiPillar, puzzleGame) => {
     rotate,
     onClick,
   );
-};
-
-const startUiPillarClockwiseRotation = (uiPillar) => {
-  uiPillar.isRotatingClockwise = true;
-  uiPillar.rotateAnimationProgress = 0;
-};
-
-const startUiPillarCounterClockwiseRotation = (uiPillar) => {
-  uiPillar.isRotatingCounterClockwise = true;
-  uiPillar.rotateAnimationProgress = 0;
-};
-
-const endUiPillarClockwiseRotation = (uiPillar) => {
-  uiPillar.isRotatingClockwise = false;
-  uiPillar.rotateAnimationProgress = 0;
-};
-
-const endUiPillarCounterClockwiseRotation = (uiPillar) => {
-  uiPillar.isRotatingCounterClockwise = false;
-  uiPillar.rotateAnimationProgress = 0;
-};
-
-const handleUiPillarClockwiseRotation = (gameTime, uiPillar, puzzleGame) => {
-  const deltaTime = gameTime.elapsedGameTimeInMs;
-
-  const step = deltaTime / PILLAR_ROTATE_ANIMATION_DURATION_IN_MS;
-
-  const newRotateAnimationProgress = uiPillar.rotateAnimationProgress + step;
-
-  uiPillar.rotateAnimationProgress = Math.min(1.0, newRotateAnimationProgress);
-
-  if (uiPillar.rotateAnimationProgress >= 1.0) {
-    endUiPillarClockwiseRotation(uiPillar);
-    // puzzleGame.rotatePillarClockwise(uiPillar.pillar.position);
-  }
-};
-
-const handleUiPillarCounterClockwiseRotation = (
-  gameTime,
-  uiPillar,
-  puzzleGame,
-) => {
-  const deltaTime = gameTime.elapsedGameTimeInMs;
-
-  const step = deltaTime / PILLAR_ROTATE_ANIMATION_DURATION_IN_MS;
-
-  const newRotateAnimationProgress = uiPillar.rotateAnimationProgress + step;
-
-  uiPillar.rotateAnimationProgress = Math.min(1.0, newRotateAnimationProgress);
-
-  if (uiPillar.rotateAnimationProgress >= 1.0) {
-    endUiPillarCounterClockwiseRotation(uiPillar);
-    // puzzleGame.rotatePillarCounterClockwise(uiPillar.pillar.position);
-  }
-};
-
-const updateUiPillars = (gameTime, uiPillars, puzzleGame) => {
-  uiPillars.forEach((uiPillar) => {
-    if (uiPillar.isRotatingClockwise) {
-      handleUiPillarClockwiseRotation(gameTime, uiPillar, puzzleGame);
-
-      return;
-    }
-
-    if (uiPillar.isRotatingCounterClockwise) {
-      handleUiPillarCounterClockwiseRotation(gameTime, uiPillar, puzzleGame);
-
-      return;
-    }
-  });
-};
-
-const drawUiPillars = (context, uiPillars) => {
-  uiPillars.forEach((uiPillar) => {
-    drawUiPillar(context, uiPillar);
-  });
-};
-
-const drawUiPillarButtons = (context, uiPillarButtons) => {
-  uiPillarButtons.forEach((uiPillarButton) => {
-    drawUiPillarButton(context, uiPillarButton);
-  });
 };

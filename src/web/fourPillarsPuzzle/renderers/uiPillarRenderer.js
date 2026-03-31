@@ -9,16 +9,18 @@ const PILLAR_STROKE_COLOR = "#111827";
 
 const PILLAR_STROKE_WIDTH = 3;
 
-export const drawUiPillar = (context, uiPillar) => {
+export const drawUiPillar = (context, puzzleGame, uiPillar) => {
   const {
+    pillarPosition,
     centerX,
     centerY,
     radius,
     isRotatingClockwise,
     isRotatingCounterClockwise,
     rotateAnimationProgress,
-    pillar,
   } = uiPillar;
+
+  const pillar = puzzleGame.getPillar(pillarPosition);
 
   const parts = pillar.parts[pillar.rotationState];
 
@@ -62,25 +64,4 @@ export const drawUiPillar = (context, uiPillar) => {
   context.strokeStyle = PILLAR_STROKE_COLOR;
   context.lineWidth = PILLAR_STROKE_WIDTH;
   context.stroke();
-};
-
-export const drawUiPillarButton = (context, uiPillarButton) => {
-  const { centerX, centerY, width, height, img, rotate, isHover } =
-    uiPillarButton;
-
-  const halfX = width / 2;
-  const halfY = height / 2;
-
-  context.save();
-  context.translate(centerX, centerY);
-  context.rotate(rotate);
-
-  context.beginPath();
-  context.arc(0, 0, Math.min(halfX, halfY), 0, 2 * Math.PI);
-  context.fillStyle = isHover ? "#bfdbfe" : "#e5e7eb";
-  context.fill();
-
-  context.drawImage(img, -halfX, -halfY, width, height);
-
-  context.restore();
 };
