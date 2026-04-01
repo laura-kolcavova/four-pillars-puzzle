@@ -3,55 +3,63 @@ import { createPuzzle } from "./puzzle";
 export const createPuzzleGame = () => {
   const puzzle = createPuzzle();
 
-  const rotatePillarClockwise = (position) => {
+  const getPillar = (position) => {
     const pillar = puzzle.pillars[position];
 
+    return pillar;
+  };
+
+  const getConnectedPositions = (position) => {
     const connectedPositions = puzzle.connectedPositions[position];
 
-    const connectedPillarA = puzzle.pillars[connectedPositions[0]];
-    const connectedPillarB = puzzle.pillars[connectedPositions[1]];
+    return connectedPositions;
+  };
 
-    rotateClockwise(pillar);
-    rotateClockwise(connectedPillarA);
-    rotateClockwise(connectedPillarB);
+  const rotatePillarClockwise = (position) => {
+    const connectedPositions = getConnectedPositions(position);
+
+    rotateSinglePillarClockwise(position);
+    rotateSinglePillarClockwise(connectedPositions[0]);
+    rotateSinglePillarClockwise(connectedPositions[1]);
   };
 
   const rotatePillarCounterClockwise = (position) => {
-    const pillar = puzzle.pillars[position];
+    const connectedPositions = getConnectedPositions(position);
 
-    const connectedPositions = puzzle.connectedPositions[position];
+    rotateSinglePillarCounterClockwise(position);
+    rotateSinglePillarCounterClockwise(connectedPositions[0]);
+    rotateSinglePillarCounterClockwise(connectedPositions[1]);
+  };
 
-    const connectedPillarA = puzzle.pillars[connectedPositions[0]];
-    const connectedPillarB = puzzle.pillars[connectedPositions[1]];
+  const rotateSinglePillarClockwise = (position) => {
+    const pillar = getPillar(position);
 
-    rotateCounterClockwise(pillar);
-    rotateCounterClockwise(connectedPillarA);
-    rotateCounterClockwise(connectedPillarB);
+    if (pillar.rotationState === pillar.parts.length - 1) {
+      pillar.rotationState = 0;
+
+      return;
+    }
+
+    pillar.rotationState++;
+  };
+
+  const rotateSinglePillarCounterClockwise = (position) => {
+    const pillar = getPillar(position);
+
+    if (pillar.rotationState === 0) {
+      pillar.rotationState = pillar.parts.length - 1;
+
+      return;
+    }
+
+    pillar.rotationState--;
   };
 
   return {
     puzzle,
+    getPillar,
+    getConnectedPositions,
     rotatePillarClockwise,
     rotatePillarCounterClockwise,
   };
-};
-
-const rotateClockwise = (pillar) => {
-  if (pillar.rotationState === pillar.parts.length - 1) {
-    pillar.rotationState = 0;
-
-    return;
-  }
-
-  pillar.rotationState++;
-};
-
-const rotateCounterClockwise = (pillar) => {
-  if (pillar.rotationState === 0) {
-    pillar.rotationState = pillar.parts.length - 1;
-
-    return;
-  }
-
-  pillar.rotationState--;
 };

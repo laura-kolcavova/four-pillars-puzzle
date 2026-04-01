@@ -9,8 +9,18 @@ const PILLAR_STROKE_COLOR = "#111827";
 
 const PILLAR_STROKE_WIDTH = 3;
 
-export const drawUiPillar = (context, uiPillar) => {
-  const { centerX, centerY, radius, pillar } = uiPillar;
+export const drawUiPillar = (context, puzzleGame, uiPillar) => {
+  const {
+    position,
+    centerX,
+    centerY,
+    radius,
+    isRotatingClockwise,
+    isRotatingCounterClockwise,
+    rotateAnimationProgress,
+  } = uiPillar;
+
+  const pillar = puzzleGame.getPillar(position);
 
   const parts = pillar.parts[pillar.rotationState];
 
@@ -21,12 +31,28 @@ export const drawUiPillar = (context, uiPillar) => {
     [Math.PI / 2, Math.PI],
   ];
 
+  const offsetAngle = Math.PI / 4;
+
+  let rotateAngle = 0;
+
+  if (isRotatingClockwise) {
+    rotateAngle = rotateAnimationProgress * (Math.PI / 2);
+  } else if (isRotatingCounterClockwise) {
+    rotateAngle = -rotateAnimationProgress * (Math.PI / 2);
+  }
+
   quarterAngles.forEach(([startAngle, endAngle], index) => {
     const partValue = parts[index];
 
     context.beginPath();
     context.moveTo(centerX, centerY);
-    context.arc(centerX, centerY, radius, startAngle, endAngle);
+    context.arc(
+      centerX,
+      centerY,
+      radius,
+      startAngle + offsetAngle + rotateAngle,
+      endAngle + offsetAngle + rotateAngle,
+    );
     context.closePath();
 
     context.fillStyle = PILLAR_PART_COLORS[partValue];
@@ -38,19 +64,4 @@ export const drawUiPillar = (context, uiPillar) => {
   context.strokeStyle = PILLAR_STROKE_COLOR;
   context.lineWidth = PILLAR_STROKE_WIDTH;
   context.stroke();
-};
-
-export const drawUiPillarButton = (context, uiPillarButton) => {
-  const { centerX, centerY, width, height, img, rotate } = uiPillarButton;
-
-  const halfX = width / 2;
-  const halfY = height / 2;
-
-  context.save();
-  context.translate(centerX, centerY);
-  context.rotate(rotate);
-
-  context.drawImage(img, -halfX, -halfY, width, height);
-
-  context.restore();
 };
