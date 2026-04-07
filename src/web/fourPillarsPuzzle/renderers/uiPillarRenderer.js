@@ -18,9 +18,8 @@ const PILLAR_STROKE_COLOR = "#111827";
 
 const PILLAR_STROKE_WIDTH = 3;
 
-export const drawUiPillar = (context, puzzle, uiPillar) => {
+export const drawUiPillar = (context, uiPillar, rotationState) => {
   const {
-    position,
     centerX,
     centerY,
     radius,
@@ -29,9 +28,9 @@ export const drawUiPillar = (context, puzzle, uiPillar) => {
     rotateAnimationProgress,
   } = uiPillar;
 
-  const pillar = puzzle.getPillar(position);
+  const baseAngle = rotationState * (Math.PI / 2);
 
-  const baseAngle = pillar.rotationState * (Math.PI / 2);
+  console.log(rotationState);
 
   let animationAngle;
 

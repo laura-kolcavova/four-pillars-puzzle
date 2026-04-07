@@ -44,6 +44,7 @@ export const createPlayScene = (game) => {
   const puzzle = createPuzzle();
 
   puzzle.shufflePillars();
+  puzzle.setRandomSolveState();
 
   const updateHandlers = [];
 

@@ -1,12 +1,12 @@
-export const PILLAR_INITIAL_ROTATION_STATE = 0;
+export const PILLAR_START_ROTATION_STATE = 0;
 export const PILLAR_END_ROTATION_STATE = 3;
 
-export const createPillar = (position) => {
+export const createPillar = (position, initialRotationState) => {
   const pillar = {};
 
   pillar.position = position;
 
-  pillar.rotationState = PILLAR_INITIAL_ROTATION_STATE;
+  pillar.rotationState = initialRotationState;
 
   pillar.setRotationState = (newRotationState) => {
     pillar.rotationState = newRotationState;
@@ -14,7 +14,7 @@ export const createPillar = (position) => {
 
   pillar.rotateClockwise = () => {
     if (pillar.rotationState === PILLAR_END_ROTATION_STATE) {
-      pillar.rotationState = PILLAR_INITIAL_ROTATION_STATE;
+      pillar.rotationState = PILLAR_START_ROTATION_STATE;
 
       return;
     }
@@ -23,7 +23,7 @@ export const createPillar = (position) => {
   };
 
   pillar.rotateCounterClockwise = () => {
-    if (pillar.rotationState === PILLAR_INITIAL_ROTATION_STATE) {
+    if (pillar.rotationState === PILLAR_START_ROTATION_STATE) {
       pillar.rotationState = PILLAR_END_ROTATION_STATE;
 
       return;

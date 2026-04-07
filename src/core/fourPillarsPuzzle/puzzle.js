@@ -2,7 +2,7 @@ import { randomBetween } from "../random";
 import {
   createPillar,
   PILLAR_END_ROTATION_STATE,
-  PILLAR_INITIAL_ROTATION_STATE,
+  PILLAR_START_ROTATION_STATE,
 } from "./pillar";
 
 export const POSITION_LEFT_TOP = 0;
@@ -13,13 +13,13 @@ export const POSITION_RIGHT_BOTTOM = 3;
 export const createPuzzle = () => {
   const puzzle = {};
 
-  puzzle.isSolved = false;
-
-  puzzle.solveState = [0, 0, 0, 0];
-
   puzzle.pillars = initializePillars([0, 0, 0, 0]);
 
   puzzle.connectedPositions = initializeConnectedPositions();
+
+  puzzle.solveState = [0, 0, 0, 0];
+
+  puzzle.isSolved = false;
 
   puzzle.getPillar = (position) => {
     const pillar = puzzle.pillars[position];
@@ -60,7 +60,7 @@ export const createPuzzle = () => {
   puzzle.shufflePillars = () => {
     puzzle.pillars.forEach((pillar) => {
       const newRotationState = randomBetween(
-        PILLAR_INITIAL_ROTATION_STATE,
+        PILLAR_START_ROTATION_STATE,
         PILLAR_END_ROTATION_STATE,
       );
 
@@ -70,7 +70,7 @@ export const createPuzzle = () => {
 
   puzzle.setRandomSolveState = () => {
     const firstRotationState = randomBetween(
-      PILLAR_INITIAL_ROTATION_STATE,
+      PILLAR_START_ROTATION_STATE,
       PILLAR_END_ROTATION_STATE,
     );
 
