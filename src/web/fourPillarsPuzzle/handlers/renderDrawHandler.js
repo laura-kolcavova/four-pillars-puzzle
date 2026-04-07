@@ -1,7 +1,7 @@
 import { drawUiPillarButton } from "../renderers/uiPillarButtonRenderer";
 import { drawUiPillar } from "../renderers/uiPillarRenderer";
 
-export const createRenderDrawHandler = (game, scene, puzzleGame) => {
+export const createRenderDrawHandler = (game, scene, puzzle) => {
   const handle = (gameTime) => {
     drawUiPillars();
     drawUiPillarButtons();
@@ -9,7 +9,7 @@ export const createRenderDrawHandler = (game, scene, puzzleGame) => {
 
   const drawUiPillars = () => {
     scene.uiPillars.forEach((uiPillar) => {
-      drawUiPillar(game.canvasContext, puzzleGame, uiPillar);
+      drawUiPillar(game.canvasContext, puzzle, uiPillar);
     });
   };
 
