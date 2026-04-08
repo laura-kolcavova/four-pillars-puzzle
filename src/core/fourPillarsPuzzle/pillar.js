@@ -1,12 +1,12 @@
 export const PILLAR_START_ROTATION_STATE = 0;
 export const PILLAR_END_ROTATION_STATE = 3;
 
-export const createPillar = (position, initialRotationState) => {
+export const createPillar = (position) => {
   const pillar = {};
 
   pillar.position = position;
 
-  pillar.rotationState = initialRotationState;
+  pillar.rotationState = PILLAR_START_ROTATION_STATE;
 
   pillar.setRotationState = (newRotationState) => {
     pillar.rotationState = newRotationState;
