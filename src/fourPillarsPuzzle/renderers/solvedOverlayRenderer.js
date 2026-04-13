@@ -52,7 +52,7 @@ const drawPlayAgainButton = (canvasContext, uiPlayAgainButton) => {
   canvasContext.textBaseline = "middle";
   canvasContext.font = "700 18px 'Play', sans-serif";
   canvasContext.fillText(
-    "Play Again",
+    uiPlayAgainButton.text,
     uiPlayAgainButton.centerX,
     uiPlayAgainButton.centerY,
   );

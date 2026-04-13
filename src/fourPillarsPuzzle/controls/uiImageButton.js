@@ -1,9 +1,10 @@
-export const createUiButton = (
+export const createUiImageButton = (
   centerX,
   centerY,
   width,
   height,
-  text,
+  image,
+  hoverImage,
   onClick,
 ) => {
   const left = centerX - width / 2;
@@ -20,17 +21,18 @@ export const createUiButton = (
     bottom,
     width,
     height,
+    image,
+    hoverImage,
     onClick,
-    text,
     isHover: false,
   };
 };
 
-export const uiButtonIntersectsWithPoint = (uiButton, x, y) => {
+export const uiImageButtonIntersectsWithPoint = (uiImageButton, x, y) => {
   return (
-    x >= uiButton.left &&
-    x <= uiButton.right &&
-    y >= uiButton.top &&
-    y <= uiButton.bottom
+    x >= uiImageButton.left &&
+    x <= uiImageButton.right &&
+    y >= uiImageButton.top &&
+    y <= uiImageButton.bottom
   );
 };

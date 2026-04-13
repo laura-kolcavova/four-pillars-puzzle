@@ -3,12 +3,14 @@ import { drawUiPillar } from "../renderers/uiPillarRenderer";
 import { drawSolveStateLines } from "../renderers/solveStateLinesRenderer";
 import { ACTION_SOLVED } from "../playScene";
 import { drawSolvedOverlay } from "../renderers/solvedOverlayRenderer";
+import { drawUiImageButton } from "../renderers/uiImageButtonRenderer";
 
 export const createRenderDrawHandler = (game, scene, puzzle) => {
   const handle = (gameTime) => {
     drawSolveStateLines(game.canvasContext, puzzle.solveState, scene.uiPillars);
     drawUiPillars();
     drawUiPillarButtons();
+    drawUiImageButton(game.canvasContext, scene.uiRestartButton);
 
     if (scene.action === ACTION_SOLVED) {
       drawSolvedOverlay(game.canvasContext, scene.uiPlayAgainButton);
