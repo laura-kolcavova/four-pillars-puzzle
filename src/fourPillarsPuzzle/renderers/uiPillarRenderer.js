@@ -1,8 +1,8 @@
 const PILLAR_PART_COLORS = [
-  "#16a34a", // green
-  "#1d4ed8", // blue
-  "#dc2626", // red
-  "#facc15", // yellow
+  "#34A853", // green
+  "#4285F4", // blue
+  "#EA4335", // red
+  "#FBBC05", // yellow
 ];
 
 const PILLAR_PART_ANGLES = [
@@ -38,8 +38,6 @@ export const drawUiPillar = (canvasContext, uiPillar, rotationState) => {
 
   const rotateAngle = baseAngle + animationAngle + PILLAR_OFFSET_ANGLE;
 
-  drawPillarBase(canvasContext, centerX, centerY, radius);
-
   PILLAR_PART_ANGLES.forEach(([startAngle, endAngle], index) => {
     canvasContext.beginPath();
     canvasContext.moveTo(centerX, centerY);
@@ -56,18 +54,12 @@ export const drawUiPillar = (canvasContext, uiPillar, rotationState) => {
     canvasContext.fill();
   });
 
-  drawPillarGloss(canvasContext, centerX, centerY, radius);
+  drawShades(canvasContext, uiPillar);
 
   canvasContext.beginPath();
   canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
   canvasContext.strokeStyle = "#000000";
   canvasContext.lineWidth = 1;
-  canvasContext.stroke();
-
-  canvasContext.beginPath();
-  canvasContext.arc(centerX, centerY, radius - 1, 0, 2 * Math.PI);
-  canvasContext.strokeStyle = "rgba(255, 255, 255, 0.75)";
-  canvasContext.lineWidth = 2;
   canvasContext.stroke();
 
   canvasContext.beginPath();
@@ -75,92 +67,46 @@ export const drawUiPillar = (canvasContext, uiPillar, rotationState) => {
   canvasContext.closePath();
   canvasContext.fillStyle = "#FFFFFF";
   canvasContext.fill();
-  canvasContext.beginPath();
-  canvasContext.arc(centerX, centerY, radius * 0.15, 0, 2 * Math.PI);
-  canvasContext.strokeStyle = "rgba(255, 255, 255, 0.85)";
-  canvasContext.lineWidth = 2;
-  canvasContext.stroke();
   canvasContext.strokeStyle = "#000000";
   canvasContext.lineWidth = 1;
   canvasContext.stroke();
 };
 
-const drawPillarBase = (canvasContext, centerX, centerY, radius) => {
-  canvasContext.save();
-  canvasContext.shadowColor = "rgba(148, 163, 184, 0.35)";
-  canvasContext.shadowBlur = radius * 0.45;
-  canvasContext.shadowOffsetX = radius * 0.08;
-  canvasContext.shadowOffsetY = radius * 0.14;
-  canvasContext.beginPath();
-  canvasContext.arc(centerX, centerY, radius * 1.08, 0, 2 * Math.PI);
-  canvasContext.fillStyle = "rgba(255, 255, 255, 0.92)";
-  canvasContext.fill();
-  canvasContext.restore();
+const drawShades = (canvasContext, uiPillar) => {
+  const { centerX, centerY, radius } = uiPillar;
 
-  const rimGradient = canvasContext.createRadialGradient(
-    centerX - radius * 0.28,
-    centerY - radius * 0.34,
-    radius * 0.18,
+  // Dome shading — darkens toward the rim to simulate a spherical surface
+  const domeGradient = canvasContext.createRadialGradient(
     centerX,
     centerY,
-    radius * 1.14,
+    0,
+    centerX,
+    centerY,
+    radius,
   );
-
-  rimGradient.addColorStop(0, "rgba(255, 255, 255, 0.96)");
-  rimGradient.addColorStop(0.72, "rgba(255, 255, 255, 0.82)");
-  rimGradient.addColorStop(1, "rgba(203, 213, 225, 0.45)");
-
-  canvasContext.beginPath();
-  canvasContext.arc(centerX, centerY, radius * 1.05, 0, 2 * Math.PI);
-  canvasContext.fillStyle = rimGradient;
-  canvasContext.fill();
-};
-
-const drawPillarGloss = (canvasContext, centerX, centerY, radius) => {
-  canvasContext.save();
+  domeGradient.addColorStop(0.0, "rgba(0, 0, 0, 0.00)");
+  domeGradient.addColorStop(0.85, "rgba(0, 0, 0, 0.00)");
+  domeGradient.addColorStop(1.0, "rgba(0, 0, 0, 0.06)");
   canvasContext.beginPath();
   canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-  canvasContext.clip();
+  canvasContext.fillStyle = domeGradient;
+  canvasContext.fill();
 
-  const topLight = canvasContext.createRadialGradient(
-    centerX - radius * 0.42,
-    centerY - radius * 0.48,
-    radius * 0.1,
-    centerX - radius * 0.22,
-    centerY - radius * 0.24,
-    radius * 1.12,
+  // Glossy highlight — offset toward upper-left
+  const glossX = centerX - radius * 0.15;
+  const glossY = centerY - radius * 0.3;
+  const glossGradient = canvasContext.createRadialGradient(
+    glossX,
+    glossY,
+    0,
+    glossX,
+    glossY,
+    radius * 0.7,
   );
-
-  topLight.addColorStop(0, "rgba(255, 255, 255, 0.62)");
-  topLight.addColorStop(0.34, "rgba(255, 255, 255, 0.28)");
-  topLight.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-  canvasContext.fillStyle = topLight;
-  canvasContext.fillRect(
-    centerX - radius,
-    centerY - radius,
-    radius * 2,
-    radius * 2,
-  );
-
-  const edgeShade = canvasContext.createLinearGradient(
-    centerX - radius,
-    centerY - radius,
-    centerX + radius,
-    centerY + radius,
-  );
-
-  edgeShade.addColorStop(0, "rgba(255, 255, 255, 0.12)");
-  edgeShade.addColorStop(0.52, "rgba(255, 255, 255, 0)");
-  edgeShade.addColorStop(1, "rgba(0, 0, 0, 0.18)");
-
-  canvasContext.fillStyle = edgeShade;
-  canvasContext.fillRect(
-    centerX - radius,
-    centerY - radius,
-    radius * 2,
-    radius * 2,
-  );
-
-  canvasContext.restore();
+  glossGradient.addColorStop(0.0, "rgba(255, 255, 255, 0.22)");
+  glossGradient.addColorStop(1.0, "rgba(255, 255, 255, 0.00)");
+  canvasContext.beginPath();
+  canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  canvasContext.fillStyle = glossGradient;
+  canvasContext.fill();
 };
