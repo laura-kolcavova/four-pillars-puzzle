@@ -1,8 +1,8 @@
 const PILLAR_PART_COLORS = [
-  "#34A853", // green
-  "#4285F4", // blue
-  "#EA4335", // red
-  "#FBBC05", // yellow
+  "#36c85a", // green
+  "#2f77ea", // blue
+  "#ff2f45", // red
+  "#f5d74b", // yellow
 ];
 
 const PILLAR_PART_ANGLES = [
@@ -75,24 +75,22 @@ export const drawUiPillar = (canvasContext, uiPillar, rotationState) => {
 const drawShades = (canvasContext, uiPillar) => {
   const { centerX, centerY, radius } = uiPillar;
 
-  // Dome shading — darkens toward the rim to simulate a spherical surface
   const domeGradient = canvasContext.createRadialGradient(
-    centerX,
-    centerY,
+    centerX + radius * 0.1,
+    centerY + radius * 0.1,
     0,
     centerX,
     centerY,
     radius,
   );
   domeGradient.addColorStop(0.0, "rgba(0, 0, 0, 0.00)");
-  domeGradient.addColorStop(0.85, "rgba(0, 0, 0, 0.00)");
-  domeGradient.addColorStop(1.0, "rgba(0, 0, 0, 0.06)");
+  domeGradient.addColorStop(0.7, "rgba(0, 0, 0, 0.00)");
+  domeGradient.addColorStop(1.0, "rgba(0, 0, 0, 0.16)");
   canvasContext.beginPath();
   canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
   canvasContext.fillStyle = domeGradient;
   canvasContext.fill();
 
-  // Glossy highlight — offset toward upper-left
   const glossX = centerX - radius * 0.15;
   const glossY = centerY - radius * 0.3;
   const glossGradient = canvasContext.createRadialGradient(
@@ -101,12 +99,28 @@ const drawShades = (canvasContext, uiPillar) => {
     0,
     glossX,
     glossY,
-    radius * 0.7,
+    radius * 0.95,
   );
-  glossGradient.addColorStop(0.0, "rgba(255, 255, 255, 0.22)");
+  glossGradient.addColorStop(0.0, "rgba(255, 255, 255, 0.34)");
+  glossGradient.addColorStop(0.55, "rgba(255, 255, 255, 0.08)");
   glossGradient.addColorStop(1.0, "rgba(255, 255, 255, 0.00)");
   canvasContext.beginPath();
   canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
   canvasContext.fillStyle = glossGradient;
   canvasContext.fill();
+
+  // const sparkleGradient = canvasContext.createRadialGradient(
+  //   centerX - radius * 0.26,
+  //   centerY - radius * 0.4,
+  //   0,
+  //   centerX - radius * 0.26,
+  //   centerY - radius * 0.4,
+  //   radius * 0.24,
+  // );
+  // sparkleGradient.addColorStop(0.0, "rgba(255, 255, 255, 0.28)");
+  // sparkleGradient.addColorStop(1.0, "rgba(255, 255, 255, 0.00)");
+  // canvasContext.beginPath();
+  // canvasContext.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  // canvasContext.fillStyle = sparkleGradient;
+  // canvasContext.fill();
 };
