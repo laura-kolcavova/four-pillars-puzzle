@@ -1,4 +1,3 @@
-import { drawUiPillarButton } from "../renderers/uiPillarButtonRenderer";
 import { drawUiPillar } from "../renderers/uiPillarRenderer";
 import { drawSolveStateLines } from "../renderers/solveStateLinesRenderer";
 import { ACTION_SOLVED } from "../playScene";
@@ -27,7 +26,7 @@ export const createRenderDrawHandler = (game, scene, puzzle) => {
 
   const drawUiPillarButtons = () => {
     scene.uiPillarButtons.forEach((uiPillarButton) => {
-      drawUiPillarButton(game.canvasContext, uiPillarButton);
+      drawUiImageButton(game.canvasContext, uiPillarButton);
     });
   };
 

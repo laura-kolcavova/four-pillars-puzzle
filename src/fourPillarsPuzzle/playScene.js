@@ -1,14 +1,17 @@
-import { loadContent, restartHoverImage, restartImage } from "./contentManager";
+import {
+  arrowClockwiseImage,
+  arrowClockwiseHoverImage,
+  arrowCounterClockwiseImage,
+  arrowCounterClockwiseHoverImage,
+  loadContent,
+  restartHoverImage,
+  restartImage,
+} from "./contentManager";
 import {
   createUiPillar,
   startUiPillarClockwiseRotation,
   startUiPillarCounterClockwiseRotation,
 } from "./controls/uiPillar";
-import { createUiPillarButton } from "./controls/uiPillarButton";
-import {
-  arrowClockwiseImage,
-  arrowCounterClockwiseImage,
-} from "./contentManager";
 import {
   createPuzzle,
   POSITION_LEFT_BOTTOM,
@@ -40,9 +43,9 @@ const PLAY_AGAIN_BUTTON_HEIGHT = 44;
 const PLAY_AGAIN_BUTTON_X_RATIO = 0.5;
 const PLAY_AGAIN_BUTTON_Y_RATIO = 0.62;
 
-const RESTART_BUTTON_WIDTH = 46;
-const RESTART_BUTTON_HEIGHT = 46;
-const RESTART_BUTTON_X_RATIO = 0.75;
+const RESTART_BUTTON_WIDTH = 40;
+const RESTART_BUTTON_HEIGHT = 40;
+const RESTART_BUTTON_X_RATIO = 0.9;
 const RESTART_BUTTON_Y_RATIO = 0.9;
 
 const PILLAR_POSITION_MAP = {
@@ -76,7 +79,7 @@ export const createPlayScene = (game) => {
 
     scene.uiRestartButton = createUiRestartButton();
 
-    scene.action = ACTION_IDLE;
+    scene.action = ACTION_SOLVED;
 
     puzzle.shufflePillars();
     puzzle.setRandomSolveState();
@@ -117,11 +120,17 @@ export const createPlayScene = (game) => {
     if (scene.action === ACTION_SOLVED) {
       if (uiButtonIntersectsWithPoint(scene.uiPlayAgainButton, x, y)) {
         scene.uiPlayAgainButton.onClick?.();
+
+        return;
       }
+
+      return;
     }
 
     if (uiImageButtonIntersectsWithPoint(scene.uiRestartButton, x, y)) {
       scene.uiRestartButton.onClick?.();
+
+      return;
     }
 
     for (const uiPillarButton of scene.uiPillarButtons) {
@@ -133,6 +142,8 @@ export const createPlayScene = (game) => {
 
       if (isIntersect) {
         uiPillarButton.onClick?.();
+
+        return;
       }
     }
   };
@@ -152,6 +163,8 @@ export const createPlayScene = (game) => {
           game.canvas.style.cursor = "default";
         }
       }
+
+      return;
     }
 
     if (uiImageButtonIntersectsWithPoint(scene.uiRestartButton, x, y)) {
@@ -284,13 +297,13 @@ export const createPlayScene = (game) => {
 
     const rotate = -(45 * Math.PI) / 180;
 
-    return createUiPillarButton(
+    return createUiImageButton(
       centerX,
       centerY,
       TURN_BUTTON_SIZE,
       TURN_BUTTON_SIZE,
       arrowClockwiseImage,
-      rotate,
+      arrowClockwiseHoverImage,
       () => rotateUiPillarClockwise(uiPillar),
     );
   };
@@ -306,15 +319,13 @@ export const createPlayScene = (game) => {
       uiPillar.centerY +
       Math.sin(pillarAngle) * TURN_BUTTON_DISTANCE_FROM_CENTER;
 
-    const rotate = (45 * Math.PI) / 180;
-
-    return createUiPillarButton(
+    return createUiImageButton(
       centerX,
       centerY,
       TURN_BUTTON_SIZE,
       TURN_BUTTON_SIZE,
       arrowCounterClockwiseImage,
-      rotate,
+      arrowCounterClockwiseHoverImage,
       () => rotateUiPillarCounterClockwise(uiPillar),
     );
   };
