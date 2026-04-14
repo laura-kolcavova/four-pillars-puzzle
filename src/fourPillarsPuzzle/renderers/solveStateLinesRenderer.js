@@ -6,10 +6,10 @@ import {
 } from "../../core/fourPillarsPuzzle/puzzle";
 
 const PILLAR_PART_COLORS = [
-  "#16a34a", // green
-  "#1d4ed8", // blue
-  "#dc2626", // red
-  "#facc15", // yellow
+  "#36c85a", // green
+  "#2f77ea", // blue
+  "#ff2f45", // red
+  "#f5d74b", // yellow
 ];
 
 const PILLAR_PART_COLOR_INDEXES = [
@@ -19,7 +19,9 @@ const PILLAR_PART_COLOR_INDEXES = [
   [1, 2, 3, 0],
 ];
 
-const LINE_WIDTH = 4;
+const GLOW_LINE_WIDTH = 12;
+const CORE_LINE_WIDTH = 6;
+const SHINE_LINE_WIDTH = 2;
 
 export const drawSolveStateLines = (canvasContext, solveState, uiPillars) => {
   drawHorizontalLine(
@@ -70,21 +72,23 @@ const drawHorizontalLine = (
   const colorIndexA = PILLAR_PART_COLOR_INDEXES[solveRotationStateA][1];
   const colorIndexB = PILLAR_PART_COLOR_INDEXES[solveRotationStateB][3];
 
-  // Left half with colorA
-  context.beginPath();
-  context.moveTo(startX, startY);
-  context.lineTo(midX, startY);
-  context.strokeStyle = PILLAR_PART_COLORS[colorIndexA];
-  context.lineWidth = LINE_WIDTH;
-  context.stroke();
+  drawLineSegment(
+    context,
+    startX,
+    startY,
+    midX,
+    startY,
+    PILLAR_PART_COLORS[colorIndexA],
+  );
 
-  // Right half with colorB
-  context.beginPath();
-  context.moveTo(midX, startY);
-  context.lineTo(endX, startY);
-  context.strokeStyle = PILLAR_PART_COLORS[colorIndexB];
-  context.lineWidth = LINE_WIDTH;
-  context.stroke();
+  drawLineSegment(
+    context,
+    midX,
+    startY,
+    endX,
+    startY,
+    PILLAR_PART_COLORS[colorIndexB],
+  );
 };
 
 const drawVerticalLine = (
@@ -103,19 +107,59 @@ const drawVerticalLine = (
   const colorIndexA = PILLAR_PART_COLOR_INDEXES[solveRotationStateA][2];
   const colorIndexB = PILLAR_PART_COLOR_INDEXES[solveRotationStateB][0];
 
-  // Top half with colorA
+  drawLineSegment(
+    context,
+    startX,
+    startY,
+    startX,
+    midY,
+    PILLAR_PART_COLORS[colorIndexA],
+  );
+
+  drawLineSegment(
+    context,
+    startX,
+    midY,
+    endX,
+    endY,
+    PILLAR_PART_COLORS[colorIndexB],
+  );
+};
+
+const drawLineSegment = (context, startX, startY, endX, endY, color) => {
+  context.save();
+
+  // context.shadowBlur = 12;
+  // context.shadowColor = withAlpha(color, 0.65);
+  // context.strokeStyle = withAlpha(color, 0.34);
+  // context.lineWidth = GLOW_LINE_WIDTH;
+  // context.beginPath();
+  // context.moveTo(startX, startY);
+  // context.lineTo(endX, endY);
+  // context.stroke();
+
+  context.shadowBlur = 0;
+  context.strokeStyle = color;
+  context.lineWidth = CORE_LINE_WIDTH;
   context.beginPath();
   context.moveTo(startX, startY);
-  context.lineTo(startX, midY);
-  context.strokeStyle = PILLAR_PART_COLORS[colorIndexA];
-  context.lineWidth = LINE_WIDTH;
+  context.lineTo(endX, endY);
   context.stroke();
 
-  // Bottom half with colorB
+  context.strokeStyle = "rgba(255, 255, 255, 0.45)";
+  context.lineWidth = SHINE_LINE_WIDTH;
   context.beginPath();
-  context.moveTo(startX, midY);
+  context.moveTo(startX, startY);
   context.lineTo(endX, endY);
-  context.strokeStyle = PILLAR_PART_COLORS[colorIndexB];
-  context.lineWidth = LINE_WIDTH;
   context.stroke();
+
+  context.restore();
+};
+
+const withAlpha = (hexColor, alpha) => {
+  const red = Number.parseInt(hexColor.slice(1, 3), 16);
+  const green = Number.parseInt(hexColor.slice(3, 5), 16);
+  const blue = Number.parseInt(hexColor.slice(5, 7), 16);
+
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 };

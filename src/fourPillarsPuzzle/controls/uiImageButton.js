@@ -1,10 +1,10 @@
-export const createUiPillarButton = (
+export const createUiImageButton = (
   centerX,
   centerY,
   width,
   height,
-  img,
-  rotate,
+  image,
+  hoverImage,
   onClick,
 ) => {
   const left = centerX - width / 2;
@@ -21,9 +21,18 @@ export const createUiPillarButton = (
     bottom,
     width,
     height,
-    img,
-    rotate,
+    image,
+    hoverImage,
     onClick,
     isHover: false,
   };
+};
+
+export const uiImageButtonIntersectsWithPoint = (uiImageButton, x, y) => {
+  return (
+    x >= uiImageButton.left &&
+    x <= uiImageButton.right &&
+    y >= uiImageButton.top &&
+    y <= uiImageButton.bottom
+  );
 };

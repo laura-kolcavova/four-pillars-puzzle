@@ -1,14 +1,17 @@
-import { loadContent } from "./contentManager";
+import {
+  arrowClockwiseImage,
+  arrowClockwiseHoverImage,
+  arrowCounterClockwiseImage,
+  arrowCounterClockwiseHoverImage,
+  loadContent,
+  restartHoverImage,
+  restartImage,
+} from "./contentManager";
 import {
   createUiPillar,
   startUiPillarClockwiseRotation,
   startUiPillarCounterClockwiseRotation,
 } from "./controls/uiPillar";
-import { createUiPillarButton } from "./controls/uiPillarButton";
-import {
-  arrowClockwiseImage,
-  arrowCounterClockwiseImage,
-} from "./contentManager";
 import {
   createPuzzle,
   POSITION_LEFT_BOTTOM,
@@ -19,7 +22,14 @@ import {
 import { createAnimationUpdateHandler } from "./handlers/animationUpdateHandler";
 import { createRenderDrawHandler } from "./handlers/renderDrawHandler";
 import { createRotationUpdateHandler } from "./handlers/rotationUpdateHandler";
-import { createUiButton } from "./controls/uiButton";
+import {
+  createUiButton,
+  uiButtonIntersectsWithPoint,
+} from "./controls/uiButton";
+import {
+  createUiImageButton,
+  uiImageButtonIntersectsWithPoint,
+} from "./controls/uiImageButton";
 
 const PILLAR_RADIUS = 55;
 const PILLARS_GAP_X = 220;
@@ -30,7 +40,13 @@ const TURN_BUTTON_DISTANCE_FROM_CENTER = 86;
 
 const PLAY_AGAIN_BUTTON_WIDTH = 160;
 const PLAY_AGAIN_BUTTON_HEIGHT = 44;
+const PLAY_AGAIN_BUTTON_X_RATIO = 0.5;
 const PLAY_AGAIN_BUTTON_Y_RATIO = 0.62;
+
+const RESTART_BUTTON_WIDTH = 40;
+const RESTART_BUTTON_HEIGHT = 40;
+const RESTART_BUTTON_X_RATIO = 0.9;
+const RESTART_BUTTON_Y_RATIO = 0.9;
 
 const PILLAR_POSITION_MAP = {
   [POSITION_LEFT_TOP]: [0, 0],
@@ -60,6 +76,8 @@ export const createPlayScene = (game) => {
     scene.uiPillarButtons = createUiPillarButtons();
 
     scene.uiPlayAgainButton = createUiPlayAgainButton();
+
+    scene.uiRestartButton = createUiRestartButton();
 
     scene.action = ACTION_IDLE;
 
@@ -100,15 +118,17 @@ export const createPlayScene = (game) => {
 
   const handleClick = (x, y) => {
     if (scene.action === ACTION_SOLVED) {
-      const isIntersect =
-        x >= scene.uiPlayAgainButton.left &&
-        x <= scene.uiPlayAgainButton.right &&
-        y >= scene.uiPlayAgainButton.top &&
-        y <= scene.uiPlayAgainButton.bottom;
-
-      if (isIntersect) {
+      if (uiButtonIntersectsWithPoint(scene.uiPlayAgainButton, x, y)) {
         scene.uiPlayAgainButton.onClick?.();
+
+        return;
       }
+
+      return;
+    }
+
+    if (uiImageButtonIntersectsWithPoint(scene.uiRestartButton, x, y)) {
+      scene.uiRestartButton.onClick?.();
 
       return;
     }
@@ -130,28 +150,35 @@ export const createPlayScene = (game) => {
 
   const handleMouseMove = (x, y) => {
     if (scene.action === ACTION_SOLVED) {
-      const isIntersect =
-        x >= scene.uiPlayAgainButton.left &&
-        x <= scene.uiPlayAgainButton.right &&
-        y >= scene.uiPlayAgainButton.top &&
-        y <= scene.uiPlayAgainButton.bottom;
+      if (uiButtonIntersectsWithPoint(scene.uiPlayAgainButton, x, y)) {
+        if (!scene.uiPlayAgainButton.isHover) {
+          scene.uiPlayAgainButton.isHover = true;
 
-      if (isIntersect && !scene.uiPlayAgainButton.isHover) {
-        scene.uiPlayAgainButton.isHover = true;
+          game.canvas.style.cursor = "pointer";
+        }
+      } else {
+        if (scene.uiPlayAgainButton.isHover) {
+          scene.uiPlayAgainButton.isHover = false;
+
+          game.canvas.style.cursor = "default";
+        }
+      }
+
+      return;
+    }
+
+    if (uiImageButtonIntersectsWithPoint(scene.uiRestartButton, x, y)) {
+      if (!scene.uiRestartButton.isHover) {
+        scene.uiRestartButton.isHover = true;
 
         game.canvas.style.cursor = "pointer";
-
-        return;
       }
-
-      if (!isIntersect && scene.uiPlayAgainButton.isHover) {
-        scene.uiPlayAgainButton.isHover = false;
+    } else {
+      if (scene.uiRestartButton.isHover) {
+        scene.uiRestartButton.isHover = false;
 
         game.canvas.style.cursor = "default";
-
-        return;
       }
-      return;
     }
 
     for (const uiPillarButton of scene.uiPillarButtons) {
@@ -165,16 +192,12 @@ export const createPlayScene = (game) => {
         uiPillarButton.isHover = true;
 
         game.canvas.style.cursor = "pointer";
-
-        return;
       }
 
       if (!isIntersect && uiPillarButton.isHover) {
         uiPillarButton.isHover = false;
 
         game.canvas.style.cursor = "default";
-
-        return;
       }
     }
   };
@@ -274,13 +297,13 @@ export const createPlayScene = (game) => {
 
     const rotate = -(45 * Math.PI) / 180;
 
-    return createUiPillarButton(
+    return createUiImageButton(
       centerX,
       centerY,
       TURN_BUTTON_SIZE,
       TURN_BUTTON_SIZE,
       arrowClockwiseImage,
-      rotate,
+      arrowClockwiseHoverImage,
       () => rotateUiPillarClockwise(uiPillar),
     );
   };
@@ -296,21 +319,19 @@ export const createPlayScene = (game) => {
       uiPillar.centerY +
       Math.sin(pillarAngle) * TURN_BUTTON_DISTANCE_FROM_CENTER;
 
-    const rotate = (45 * Math.PI) / 180;
-
-    return createUiPillarButton(
+    return createUiImageButton(
       centerX,
       centerY,
       TURN_BUTTON_SIZE,
       TURN_BUTTON_SIZE,
       arrowCounterClockwiseImage,
-      rotate,
+      arrowCounterClockwiseHoverImage,
       () => rotateUiPillarCounterClockwise(uiPillar),
     );
   };
 
   const createUiPlayAgainButton = () => {
-    const centerX = game.canvas.width / 2;
+    const centerX = game.canvas.width * PLAY_AGAIN_BUTTON_X_RATIO;
     const centerY = game.canvas.height * PLAY_AGAIN_BUTTON_Y_RATIO;
 
     return createUiButton(
@@ -318,6 +339,24 @@ export const createPlayScene = (game) => {
       centerY,
       PLAY_AGAIN_BUTTON_WIDTH,
       PLAY_AGAIN_BUTTON_HEIGHT,
+      "Play Again",
+      () => {
+        restart();
+      },
+    );
+  };
+
+  const createUiRestartButton = () => {
+    const centerX = game.canvas.width * RESTART_BUTTON_X_RATIO;
+    const centerY = game.canvas.height * RESTART_BUTTON_Y_RATIO;
+
+    return createUiImageButton(
+      centerX,
+      centerY,
+      RESTART_BUTTON_WIDTH,
+      RESTART_BUTTON_HEIGHT,
+      restartImage,
+      restartHoverImage,
       () => {
         restart();
       },
