@@ -35,7 +35,8 @@ const PILLAR_RADIUS = 55;
 const PILLARS_GAP_X = 220;
 const PILLARS_GAP_Y = 220;
 
-const TURN_BUTTON_SIZE = 46;
+const TURN_BUTTON_WIDTH = 46;
+const TURN_BUTTON_HEIGHT = 46;
 const TURN_BUTTON_DISTANCE_FROM_CENTER = 86;
 
 const PLAY_AGAIN_BUTTON_WIDTH = 160;
@@ -269,6 +270,7 @@ export const createPlayScene = (game) => {
     const pillarOffsetX =
       (game.canvas.width - (PILLARS_GAP_X + PILLAR_RADIUS * 2)) / 2 +
       PILLAR_RADIUS;
+
     const pillarOffsetY =
       (game.canvas.height - (PILLARS_GAP_Y + PILLAR_RADIUS * 2)) / 2 +
       PILLAR_RADIUS;
@@ -320,8 +322,8 @@ export const createPlayScene = (game) => {
     return createUiImageButton(
       centerX,
       centerY,
-      TURN_BUTTON_SIZE,
-      TURN_BUTTON_SIZE,
+      TURN_BUTTON_WIDTH,
+      TURN_BUTTON_HEIGHT,
       arrowClockwiseImage,
       arrowClockwiseHoverImage,
       () => rotateUiPillarClockwise(uiPillar),
@@ -342,8 +344,8 @@ export const createPlayScene = (game) => {
     return createUiImageButton(
       centerX,
       centerY,
-      TURN_BUTTON_SIZE,
-      TURN_BUTTON_SIZE,
+      TURN_BUTTON_WIDTH,
+      TURN_BUTTON_HEIGHT,
       arrowCounterClockwiseImage,
       arrowCounterClockwiseHoverImage,
       () => rotateUiPillarCounterClockwise(uiPillar),
